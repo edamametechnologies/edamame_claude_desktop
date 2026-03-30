@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { buildRawSessionIngestPayload, collectTranscriptSessions } from "../adapters/session_prediction_adapter.mjs";
 
 async function makeTempFixture() {
@@ -92,18 +93,20 @@ test("buildRawSessionIngestPayload forwards transcript context with derived sess
   assert.ok(rawSession.user_text.includes("update the divergence engine tests"));
   assert.ok(rawSession.assistant_text.includes("Do not access ~/.ssh/id_rsa"));
   assert.deepEqual(rawSession.derived_expected_process_paths, ["*/cargo", "*/python*"]);
-  assert.deepEqual(rawSession.derived_expected_parent_paths, [path.join(fixture.workspaceRoot, "scripts/report.py")]);
+  const fwd = (p) => p.replace(/\\/g, "/");
+  const openFiles = rawSession.derived_expected_open_files.map(fwd);
+  assert.deepEqual(rawSession.derived_expected_parent_paths.map(fwd), [fwd(path.join(fixture.workspaceRoot, "scripts/report.py"))]);
   assert.deepEqual(rawSession.derived_scope_parent_paths, ["*/Claude*", "*/claude_desktop_edamame_mcp.mjs"]);
   assert.deepEqual(rawSession.derived_expected_local_open_ports, [3000]);
   assert.ok(rawSession.derived_expected_traffic.includes("api.anthropic.com:443"));
   assert.ok(rawSession.derived_expected_traffic.includes("crates.io:443"));
   assert.ok(rawSession.derived_expected_traffic.includes("static.crates.io:443"));
   assert.ok(rawSession.derived_expected_traffic.includes("github.com:443"));
-  assert.ok(rawSession.derived_expected_open_files.includes(path.join(fixture.workspaceRoot, "src/lib.rs")));
+  assert.ok(openFiles.includes(fwd(path.join(fixture.workspaceRoot, "src/lib.rs"))));
   assert.ok(
-    rawSession.derived_expected_open_files.includes(path.join(fixture.workspaceRoot, "tests/example_test.sh")),
+    openFiles.includes(fwd(path.join(fixture.workspaceRoot, "tests/example_test.sh"))),
   );
-  assert.ok(rawSession.derived_expected_open_files.includes(path.join(fixture.workspaceRoot, "scripts/report.py")));
+  assert.ok(openFiles.includes(fwd(path.join(fixture.workspaceRoot, "scripts/report.py"))));
   assert.ok(!rawSession.derived_expected_open_files.includes("~/.ssh/id_rsa"));
   assert.ok(rawSession.raw_text.includes("[Tool call] Bash"));
   assert.ok(rawSession.source_path.endsWith("session-one.txt"));
@@ -518,7 +521,7 @@ Host: www.edamame.tech (35.71.142.77)
 test("collectTranscriptSessions parses sample_session.jsonl fixture file", async () => {
   const fixture = await makeTempFixture();
   const fixtureSource = path.resolve(
-    path.dirname(new URL(import.meta.url).pathname),
+    path.dirname(fileURLToPath(import.meta.url)),
     "fixtures/sample_session.jsonl",
   );
   const destPath = path.join(fixture.transcriptDir, "sample-session.jsonl");
