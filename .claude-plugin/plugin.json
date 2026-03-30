@@ -1,0 +1,23 @@
+{
+  "name": "edamame-desktop",
+  "description": "Runtime behavioral monitoring for Claude Desktop. Bridges session transcripts to the EDAMAME Security two-plane divergence engine for continuous workstation protection.",
+  "version": "1.1.3",
+  "author": {
+    "name": "EDAMAME Technologies",
+    "email": "info@edamame.tech"
+  },
+  "homepage": "https://edamame.tech",
+  "repository": "https://github.com/edamametechnologies/edamame_claude_desktop",
+  "license": "Apache-2.0",
+  "keywords": [
+    "security",
+    "runtime-monitoring",
+    "behavioral-analysis",
+    "divergence-detection",
+    "desktop",
+    "knowledge-work",
+    "mcp",
+    "edamame"
+  ],
+  "mcpServers": "./.mcp.json"
+}
