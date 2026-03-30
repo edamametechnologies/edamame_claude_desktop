@@ -1,0 +1,104 @@
+---
+description: "EDAMAME for Claude Desktop - Developer workstation behavioral monitoring for Claude Desktop IDE"
+alwaysApply: true
+---
+
+# EDAMAME for Claude Desktop - Developer Workstation Package
+
+> **Master Repository:** `edamame_app` - See `../edamame_app/.cursor/rules/workspace.mdc` for workspace-wide rules.
+> **Cursor rules:** Maintained in `edamame_rules` - run `../edamame_rules/setup.sh` to symlink.
+
+## Project Context
+EDAMAME for Claude Desktop bridges Claude Desktop transcripts (reasoning plane) to the
+EDAMAME Security system-plane observer, enabling two-plane divergence
+detection on developer machines.
+
+This is a **public** repository. Do not commit private keys, internal URLs,
+or unreleased feature details.
+
+## Distribution Modes
+- **EDAMAME app / posture CLI**: `edamame-posture install-agent-plugin claude_desktop` downloads and installs via HTTP+zip (no git/bash/python needed). Cross-platform.
+- **Manual install**: `setup/install.sh` (bash) or `setup/install.ps1` (PowerShell) copies the package and renders config templates.
+
+All paths use the same runtime code under `bridge/`, `service/`, and `adapters/`.
+
+## Directory Structure
+```
+bridge/                      # Local stdio MCP bridge, control center, forwarding
+  claude_desktop_edamame_mcp.mjs # MCP bridge entry point
+  control_center_app.html    # Pairing and status UI
+  edamame_client.mjs         # HTTP client for EDAMAME MCP endpoint
+adapters/                    # Claude Desktop transcript parsing and payload assembly
+  session_prediction_adapter.mjs
+service/                     # Extrapolator, verdict reader, posture facade, health
+  claude_desktop_extrapolator.mjs # Transcript-to-model translation and push
+  verdict_reader.mjs         # Read-only divergence verdict facade
+  posture_facade.mjs         # Read-only posture/score/sessions facade
+  control_center.mjs         # Pairing, status, and control center logic
+  health.mjs                 # Health check implementation
+  healthcheck_cli.mjs        # CLI health check entry point
+  config.mjs                 # Configuration management
+skills/                      # Agent skills
+  security-posture/SKILL.md  # Posture assessment skill
+  divergence-monitor/SKILL.md # Divergence diagnosis skill
+agents/                      # Custom agent configurations
+  security-monitor.md        # Security-aware coding agent
+commands/                    # Agent-executable commands
+  healthcheck.md             # Run EDAMAME health check
+  export-intent.md           # Force behavioral model refresh
+prompts/                     # Prompt contract for EDAMAME raw-session ingest
+setup/                       # Install and health-check scripts, config templates
+  install.sh                 # Install the package (bash)
+  install.ps1                # Install the package (PowerShell, Windows)
+  healthcheck.sh             # Operator health check
+docs/                        # Architecture and setup guidance
+tests/                       # Unit tests and E2E intent injection
+```
+
+## Key Files
+- `bridge/claude_desktop_edamame_mcp.mjs` - MCP bridge entry point
+- `service/claude_desktop_extrapolator.mjs` - Transcript-to-model translation and push
+- `adapters/session_prediction_adapter.mjs` - Transcript-to-payload conversion
+- `service/config.mjs` - Configuration management
+- E2E tests live in `../agent_security/tests/e2e/` -- run triggers with `--agent-type claude_desktop` (see `E2E_TESTS.md` there)
+
+## How It Works
+1. Claude Desktop produces session transcripts.
+2. This package parses transcripts and forwards them to EDAMAME via MCP.
+3. EDAMAME evaluates behavioral intent against live system telemetry.
+4. Divergence verdicts surface through the control center or health checks.
+
+## Prerequisites
+- Node.js 18+
+- EDAMAME Security running on the same machine (app on macOS/Windows,
+  `edamame_posture` CLI on Linux)
+
+## Build & Test
+```bash
+node --test tests/*.test.mjs
+bash setup/healthcheck.sh --strict --json
+```
+
+## Sibling Repositories
+```
+../edamame_claude_code/   # Claude Code developer workstation plugin (public)
+../edamame_claude/        # Shared Claude components library (public)
+../edamame_cursor/        # Cursor developer workstation package (public)
+../edamame_openclaw/      # OpenClaw agent integration package (public)
+../agent_security/        # Research paper and publication pipeline (public)
+../edamame_core/          # EDAMAME core Rust library (private)
+../edamame_posture/       # EDAMAME Posture CLI (public)
+```
+
+## Invariants
+- This is a public repo: no internal credentials, no private URLs.
+- The MCP bridge forwards calls to EDAMAME; it does not store security state.
+- On developer workstations, the EDAMAME Security app is the MCP host of
+  record; do not require `edamame_posture` for that path.
+- Every `BehavioralWindow` slice must include explicit `agent_type` and
+  `agent_instance_id` fields.
+- **Install/uninstall script consistency**: `setup/install.sh` and `setup/install.ps1`
+  must create the same directories, copy the same files, and apply the same structure
+  as `edamame_foundation`'s install functions in `src/agent_plugin.rs`.
+  Agent instance ID must use SHA256 (12 hex). When modifying
+  either side, update the others to match.
