@@ -14,17 +14,27 @@ const SENSITIVE_PATH_PATTERNS = [
   "~/.docker/config.json",
   "~/.npmrc",
   "~/.netrc",
-  // macOS browser data
+  "~/.env",
+  "~/.env.*",
+  "~/.pgpass",
+  "~/.pypirc",
+  "~/.git-credentials",
+  "~/.vault-token",
+  "~/.azure/*",
+  "~/.my.cnf",
+  "~/Library/Keychains/*",
   "~/Library/Application Support/Google/Chrome/*",
   "~/Library/Application Support/Chromium/*",
   "~/Library/Application Support/Firefox/*",
   "~/Library/Application Support/BraveSoftware/*",
-  // Windows browser data
   "~/AppData/Local/Google/Chrome/*",
+  "~/AppData/Local/Google/Chrome/User Data/*",
   "~/AppData/Local/Chromium/*",
   "~/AppData/Local/Mozilla/Firefox/*",
   "~/AppData/Local/BraveSoftware/*",
-  // Linux browser data
+  "~/AppData/Roaming/Mozilla/Firefox/Profiles/*",
+  "~/AppData/Roaming/Microsoft/Credentials/*",
+  "~/AppData/Roaming/Microsoft/Protect/*",
   "~/.config/google-chrome/*",
   "~/.config/chromium/*",
   "~/.mozilla/firefox/*",
@@ -896,8 +906,12 @@ export async function buildRawSessionIngestPayload(config, options = {}) {
       const { processPaths, parentPaths } = inferProcessPaths(session.commands, config.workspaceRoot);
       const derivedExpectedOpenFiles = inferExpectedOpenFiles(extractedPaths, session.combinedText);
 
+      const sessionKey = session.sourceKind === "claude_cowork"
+        ? `cowork:${session.sessionId}`
+        : session.sessionId;
+
       return {
-        session_key: session.sessionId,
+        session_key: sessionKey,
         title: session.title,
         user_text: session.userText,
         assistant_text: session.assistantText,
@@ -915,6 +929,7 @@ export async function buildRawSessionIngestPayload(config, options = {}) {
         derived_scope_any_lineage_paths: derivedScopeAnyLineagePaths,
         derived_expected_open_files: derivedExpectedOpenFiles,
         source_path: session.sourcePath,
+        source_kind: session.sourceKind || "claude_desktop",
         started_at: session.startedAt.toISOString(),
         modified_at: session.modifiedAt.toISOString(),
       };
