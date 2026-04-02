@@ -85,7 +85,7 @@ test("buildRawSessionIngestPayload forwards transcript context with derived sess
   assert.equal(result.rawSessions.sessions.length, 1);
   const rawSession = result.rawSessions.sessions[0];
 
-  assert.equal(rawSession.session_key, "session-one");
+  assert.equal(rawSession.session_key, "cowork:session-one");
   assert.equal(rawSession.title, "update the divergence engine tests and run cargo test");
   assert.deepEqual(rawSession.tool_names.sort(), ["Bash", "ReadFile", "WebSearch"].sort());
   assert.ok(rawSession.commands.some((entry) => entry.includes("cargo test -p edamame_core")));
@@ -268,7 +268,7 @@ test("buildRawSessionIngestPayload populates derived hints from JSONL prose extr
     }),
   );
 
-  const session = result.rawSessions.sessions.find((s) => s.session_key === "session-jsonl-derive");
+  const session = result.rawSessions.sessions.find((s) => s.session_key === "cowork:session-jsonl-derive");
   assert.ok(session, "JSONL derive session should be found");
 
   assert.ok(session.tool_names.includes("Bash"), `tool_names should have Bash: ${session.tool_names}`);
@@ -349,7 +349,7 @@ test("JSONL nmap session extracts commands, traffic targets, ports, and process 
     }),
   );
 
-  const session = result.rawSessions.sessions.find((s) => s.session_key === "session-nmap");
+  const session = result.rawSessions.sessions.find((s) => s.session_key === "cowork:session-nmap");
   assert.ok(session, "nmap session should be found");
 
   assert.ok(
@@ -414,7 +414,7 @@ test("JSONL session with ssh, ping, and dig extracts all commands and traffic", 
     }),
   );
 
-  const session = result.rawSessions.sessions.find((s) => s.session_key === "session-network");
+  const session = result.rawSessions.sessions.find((s) => s.session_key === "cowork:session-network");
   assert.ok(session, "network session should be found");
 
   assert.ok(
@@ -488,7 +488,7 @@ Host: www.edamame.tech (35.71.142.77)
     }),
   );
 
-  const session = result.rawSessions.sessions.find((s) => s.session_key === "session-nmap-txt");
+  const session = result.rawSessions.sessions.find((s) => s.session_key === "cowork:session-nmap-txt");
   assert.ok(session, "nmap txt session should be found");
 
   assert.ok(session.tool_names.includes("Bash"), `tool_names should have Bash: ${session.tool_names}`);
@@ -547,5 +547,69 @@ test("collectTranscriptSessions parses sample_session.jsonl fixture file", async
   assert.ok(
     session.commands.some((cmd) => cmd.includes("flutter analyze")),
     `commands should have flutter analyze: ${JSON.stringify(session.commands)}`,
+  );
+});
+
+test("buildRawSessionIngestPayload prefixes cowork sessions with cowork: and tags source_kind (G-23)", async () => {
+  const fixture = await makeTempFixture();
+  const codeProjectsRoot = path.join(fixture.root, "code-projects");
+  const codeWorkspaceDir = path.join(codeProjectsRoot, "fixture-code-workspace");
+  await fs.mkdir(codeWorkspaceDir, { recursive: true });
+
+  const sessionCodePath = path.join(codeWorkspaceDir, "session-code.txt");
+  await fs.writeFile(
+    sessionCodePath,
+    `user:
+<user_query>
+hello from code project
+</user_query>
+
+assistant:
+Acknowledged. I will focus on the code workspace task.
+`,
+    "utf8",
+  );
+
+  const coworkExtraPath = path.join(fixture.transcriptDir, "session-cowork-extra.txt");
+  await fs.writeFile(
+    coworkExtraPath,
+    `user:
+<user_query>
+hello from cowork
+</user_query>
+
+assistant:
+Acknowledged. I will focus on the cowork session.
+`,
+    "utf8",
+  );
+
+  const result = await buildRawSessionIngestPayload(
+    makeBaseConfig(fixture, {
+      codeProjectsRoot,
+      transcriptProjectHints: ["fixture-workspace", "fixture-code-workspace"],
+      claudeDesktopLlmHosts: [],
+      scopeParentPaths: [],
+    }),
+  );
+
+  const sessions = result.rawSessions.sessions;
+  assert.equal(sessions.length, 3, "expected session-code, session-one, session-cowork-extra");
+
+  const codeSession = sessions.find((s) => s.session_key === "session-code");
+  assert.ok(codeSession, "code project session should be present");
+  assert.equal(codeSession.source_kind, "claude_code");
+
+  const one = sessions.find((s) => s.session_key === "cowork:session-one");
+  assert.ok(one, "default fixture session should be cowork-prefixed");
+  assert.equal(one.source_kind, "claude_cowork");
+
+  const extra = sessions.find((s) => s.session_key === "cowork:session-cowork-extra");
+  assert.ok(extra);
+  assert.equal(extra.source_kind, "claude_cowork");
+
+  assert.ok(!sessions.some((s) => s.session_key === "session-one"), "cowork sessions must not omit cowork: prefix");
+  assert.ok(
+    sessions.filter((s) => s.session_key.startsWith("cowork:")).every((s) => s.source_kind === "claude_cowork"),
   );
 });
