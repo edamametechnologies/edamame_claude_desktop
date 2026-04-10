@@ -631,9 +631,14 @@ for p in ours:
     if sk and sk not in sk_have:
         sk_have.append(sk)
 out["session_keys_present_for_agent"] = sk_have[:40]
-missing = [sk for sk in keys if sk not in sk_have]
+def has_expected_key(expected: str, seen_keys: list[str]) -> bool:
+    if expected in seen_keys:
+        return True
+    return f"cowork:{expected}" in seen_keys
+
+missing = [sk for sk in keys if not has_expected_key(sk, sk_have)]
 out["session_keys_missing"] = missing
-out["e2e_marker_keys_present"] = [x for x in sk_have if isinstance(x, str) and (x.startswith("e2e_") or x.startswith("cw_e2e_"))]
+out["e2e_marker_keys_present"] = [x for x in sk_have if isinstance(x, str) and (x.startswith("e2e_") or x.startswith("cw_e2e_") or x.startswith("cowork:e2e_"))]
 out["hint"] = "If keys are missing after extrapolator success, LLM merge may have dropped sessions or contributor hash drifted under merge."
 print(json.dumps(out, indent=2, ensure_ascii=False))
 PY
