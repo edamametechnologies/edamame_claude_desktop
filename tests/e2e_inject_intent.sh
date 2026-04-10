@@ -511,7 +511,7 @@ for sk in session_keys:
     ok = any(
         p.get('agent_type') == agent_type
         and p.get('agent_instance_id') == agent_id
-        and p.get('session_key') == sk
+        and (p.get('session_key') == sk or p.get('session_key') == f'cowork:{sk}')
         for p in preds
     )
     if not ok:
