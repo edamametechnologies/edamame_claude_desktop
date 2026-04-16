@@ -98,6 +98,9 @@ jobs:
         env:
           EDAMAME_LLM_API_KEY: ${{ secrets.EDAMAME_LLM_API_KEY }}
         run: |
+          echo "--- Stopping any existing daemon (APT/pkg may auto-start) ---"
+          sudo "$EDAMAME_POSTURE" stop 2>/dev/null || true
+          sleep 2
           echo "--- Starting daemon (disconnected + capture) ---"
           sudo -E "$EDAMAME_POSTURE" background-start-disconnected --packet-capture
           sleep 5
