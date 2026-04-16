@@ -116,6 +116,11 @@ export const DEFAULT_CONFIG = Object.freeze({
     "asn:CLOUDFLARENET",
     "asn:NOTION",
     "asn:MICROSOFT-CORP",
+    // Claude Desktop LLM traffic routes through AWS (AS14618 AMAZON-AES,
+    // AS16509 AMAZON-02). Many sessions resolve only to raw IPs
+    // without reverse DNS, so domain suffix matching against
+    // amazonaws.com misses them; ASN matching catches the rest.
+    "asn:AMAZON",
   ],
   scopeProcessPaths: [],
   scopeParentPaths: [
