@@ -12,6 +12,8 @@
 4. EDAMAME generates or updates the merged behavioral model, evaluates divergence, and exposes read-only posture and verdict state.
 5. `bridge/claude_desktop_edamame_mcp.mjs` exposes the local control-center, healthcheck, posture-summary, and EDAMAME passthrough tools to Claude Desktop.
 
+> **External transcript observer (additive, no change in this repo).** Starting with `edamame_core` 1.2.3, EDAMAME also runs its own observer that reads the same Code-in-Desktop and Cowork transcript roots directly and feeds the same `upsert_behavioral_model_from_raw_sessions` pipeline. The Node-side bridge in this repo keeps working unchanged; the observer is purely additive and hash-skips when its payload matches the last push from this bridge. Operators can pause / resume / run-now per agent from the EDAMAME app's AI / Config tab. When the observer is paused while Claude Desktop is installed, EDAMAME's `unsecured_claude_desktop` internal threat trips on the next score cycle.
+
 ## Host Modes
 
 | Platform | Host of record | Notes |
