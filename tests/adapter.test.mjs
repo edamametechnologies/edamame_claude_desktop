@@ -550,10 +550,10 @@ test("collectTranscriptSessions parses sample_session.jsonl fixture file", async
   );
 });
 
-test("buildRawSessionIngestPayload prefixes cowork sessions with cowork: and tags source_kind (G-23)", async () => {
+test("buildRawSessionIngestPayload only ingests cowork sessions for Claude Desktop", async () => {
   const fixture = await makeTempFixture();
-  const codeProjectsRoot = path.join(fixture.root, "code-projects");
-  const codeWorkspaceDir = path.join(codeProjectsRoot, "fixture-code-workspace");
+  const ignoredProjectsRoot = path.join(fixture.root, "code-projects");
+  const codeWorkspaceDir = path.join(ignoredProjectsRoot, "fixture-code-workspace");
   await fs.mkdir(codeWorkspaceDir, { recursive: true });
 
   const sessionCodePath = path.join(codeWorkspaceDir, "session-code.txt");
@@ -586,7 +586,6 @@ Acknowledged. I will focus on the cowork session.
 
   const result = await buildRawSessionIngestPayload(
     makeBaseConfig(fixture, {
-      codeProjectsRoot,
       transcriptProjectHints: ["fixture-workspace", "fixture-code-workspace"],
       claudeDesktopLlmHosts: [],
       scopeParentPaths: [],
@@ -594,11 +593,10 @@ Acknowledged. I will focus on the cowork session.
   );
 
   const sessions = result.rawSessions.sessions;
-  assert.equal(sessions.length, 3, "expected session-code, session-one, session-cowork-extra");
+  assert.equal(sessions.length, 2, "expected only session-one and session-cowork-extra");
 
   const codeSession = sessions.find((s) => s.session_key === "session-code");
-  assert.ok(codeSession, "code project session should be present");
-  assert.equal(codeSession.source_kind, "claude_code");
+  assert.equal(codeSession, undefined, "Claude Desktop must not ingest Claude Code project sessions");
 
   const one = sessions.find((s) => s.session_key === "cowork:session-one");
   assert.ok(one, "default fixture session should be cowork-prefixed");

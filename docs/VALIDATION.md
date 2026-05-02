@@ -2,7 +2,7 @@
 
 | Area | Check | Mechanism | Expected result |
 |---|---|---|---|
-| Transcript contract | Parse Desktop transcript fixtures from Code-in-Desktop and Cowork style roots | `node --test tests/adapter.test.mjs` | transcript parsing yields valid `RawReasoningSessionPayload` rows with correct `agent_type`, `agent_instance_id`, tools, commands, ports, paths, and expected traffic hints |
+| Transcript contract | Parse Desktop Cowork transcript fixtures from the local-agent-mode root | `node --test tests/adapter.test.mjs` | transcript parsing yields valid `RawReasoningSessionPayload` rows with correct `agent_type`, `agent_instance_id`, tools, commands, ports, paths, and expected traffic hints |
 | Bridge contract | Exercise MCP lifecycle, tool dispatch, resources, pairing, refresh hooks, and retry behavior | `node --test tests/bridge.test.mjs` | `initialize`, `tools/list`, `resources/read`, control-center tools, `claude_desktop_refresh_behavioral_model`, and `claude_desktop_healthcheck` behave consistently |
 | Package install | Render a per-user install and MCP snippet | `bash setup/install.sh <workspace>` or `pwsh ./setup/install.ps1 -WorkspaceRoot <workspace>` | package files, config, and Claude Desktop MCP registration are created without overwriting unrelated user config |
 | Local health | Validate config, credentials, endpoint reachability, divergence engine, and model presence | `bash setup/healthcheck.sh --strict --json` | all checks report healthy when Claude Desktop is paired to a running EDAMAME host |

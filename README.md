@@ -1,8 +1,8 @@
 # EDAMAME for Claude Desktop
 
-Runtime behavioral monitoring for Claude Desktop. Bridges session transcripts
-from both Code-in-Desktop and Cowork modes to the EDAMAME Security two-plane
-divergence engine for continuous workstation protection.
+Runtime behavioral monitoring for Claude Desktop. Bridges Desktop Cowork
+session transcripts to the EDAMAME Security two-plane divergence engine for
+continuous workstation protection.
 
 ---
 
@@ -18,9 +18,10 @@ divergence engine for continuous workstation protection.
 
 ## How It Works
 
-1. Claude Desktop produces session transcripts in two locations:
-   - `~/.claude/projects/` -- Code-in-Desktop sessions
-   - Cowork sessions (platform-specific: macOS `~/Library/Application Support/Claude/local-agent-mode-sessions/`, Windows `%APPDATA%/Claude/local-agent-mode-sessions/`, Linux `~/.local/share/claude-desktop/local-agent-mode-sessions/`)
+1. Claude Desktop produces Cowork session transcripts in the platform-specific local-agent-mode directory:
+   - macOS: `~/Library/Application Support/Claude/local-agent-mode-sessions/`
+   - Windows: `%APPDATA%/Claude/local-agent-mode-sessions/`
+   - Linux: `~/.local/share/claude-desktop/local-agent-mode-sessions/`
 2. This package parses transcripts and forwards them to EDAMAME via MCP
    (`upsert_behavioral_model_from_raw_sessions`).
 3. EDAMAME evaluates behavioral intent against live system telemetry.

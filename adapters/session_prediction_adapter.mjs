@@ -110,7 +110,6 @@ async function candidateTranscriptFiles(config) {
   const resolved = [];
 
   const roots = [
-    { root: config.codeProjectsRoot, sourceKind: "claude_code" },
     { root: config.coworkSessionsRoot, sourceKind: "claude_cowork" },
   ];
 

@@ -4,15 +4,13 @@
 
 ## Runtime Model
 
-1. Claude Desktop produces session transcripts from two sources:
-   - Code-in-Desktop sessions under `~/.claude/projects/`
-   - Cowork sessions under the platform-specific local-agent-mode sessions directory
+1. Claude Desktop produces Cowork session transcripts under the platform-specific local-agent-mode sessions directory.
 2. `adapters/session_prediction_adapter.mjs` discovers recent transcripts and converts them into `RawReasoningSessionPayload`.
 3. `service/claude_desktop_extrapolator.mjs` forwards the raw payload to the local EDAMAME MCP endpoint via `upsert_behavioral_model_from_raw_sessions`.
 4. EDAMAME generates or updates the merged behavioral model, evaluates divergence, and exposes read-only posture and verdict state.
 5. `bridge/claude_desktop_edamame_mcp.mjs` exposes the local control-center, healthcheck, posture-summary, and EDAMAME passthrough tools to Claude Desktop.
 
-> **External transcript observer (additive, no change in this repo).** Starting with `edamame_core` 1.2.3, EDAMAME runs its own observer that reads the same Code-in-Desktop (`~/.claude/projects/`) and Cowork (`local-agent-mode-sessions/`) transcript roots directly and feeds the same `upsert_behavioral_model_from_raw_sessions` pipeline. The observer is the security primitive: divergence detection works as soon as Claude Desktop is **discovered** on disk, regardless of whether this Node-side package is installed. When the package **is** installed, its bridge also pushes models in-process and the observer hash-skips on duplicate payloads -- so the two paths are purely additive and this repo's install / MCP / pairing flow is unchanged. Operators can pause / resume / run-now per agent from the EDAMAME app's AI / Config tab. When the observer is paused while Claude Desktop is discovered on disk, EDAMAME's `unsecured_claude_desktop` internal threat trips on the next score cycle.
+> **External transcript observer (additive, no change in this repo).** Starting with `edamame_core` 1.2.3, EDAMAME runs its own observer that reads the same Cowork (`local-agent-mode-sessions/`) transcript root directly and feeds the same `upsert_behavioral_model_from_raw_sessions` pipeline. The observer is the security primitive: divergence detection works as soon as Claude Desktop is **discovered** on disk, regardless of whether this Node-side package is installed. When the package **is** installed, its bridge also pushes models in-process and the observer hash-skips on duplicate payloads -- so the two paths are purely additive and this repo's install / MCP / pairing flow is unchanged. Operators can pause / resume / run-now per agent from the EDAMAME app's AI / Config tab. When the observer is paused while Claude Desktop is discovered on disk, EDAMAME's `unsecured_claude_desktop` internal threat trips on the next score cycle. Claude Code project transcripts under `~/.claude/projects/` are owned by the Claude Code integration to avoid double-counting the same intent as two agents.
 
 ## Host Modes
 

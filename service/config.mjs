@@ -90,7 +90,6 @@ function defaultCoworkSessionsRoot() {
 
 export const DEFAULT_CONFIG = Object.freeze({
   workspaceRoot: process.cwd(),
-  codeProjectsRoot: path.join(os.homedir(), ".claude", "projects"),
   coworkSessionsRoot: defaultCoworkSessionsRoot(),
   transcriptProjectHints: [],
   transcriptLimit: 6,
@@ -267,10 +266,6 @@ function normalizeConfig(raw = {}, overrides = {}) {
 
   return {
     workspaceRoot,
-    codeProjectsRoot: path.resolve(
-      expandHome(firstDefined(merged, "codeProjectsRoot", "code_projects_root")) ||
-        DEFAULT_CONFIG.codeProjectsRoot,
-    ),
     coworkSessionsRoot: path.resolve(
       expandHome(firstDefined(merged, "coworkSessionsRoot", "cowork_sessions_root")) ||
         DEFAULT_CONFIG.coworkSessionsRoot,

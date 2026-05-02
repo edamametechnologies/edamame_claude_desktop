@@ -624,7 +624,7 @@ function pairingInstructions(hostKind) {
 function baselineConfigJson(config) {
   return {
     workspace_root: config.workspaceRoot,
-    code_projects_root: config.codeProjectsRoot,
+    cowork_sessions_root: config.coworkSessionsRoot,
     transcript_project_hints: config.transcriptProjectHints,
     transcript_limit: config.transcriptLimit,
     transcript_recency_hours: config.transcriptRecencyHours,
@@ -756,8 +756,7 @@ export async function buildControlCenterPayload(config, options = {}) {
     config: {
       configPath: config.configPath || defaultConfigPath(),
       workspaceRoot: config.workspaceRoot,
-      codeProjectsRoot: config.codeProjectsRoot,
-      claudeCodeProjectsRoot: config.codeProjectsRoot,
+      coworkSessionsRoot: config.coworkSessionsRoot,
       stateDir: config.stateDir,
       endpoint: config.edamameMcpEndpoint,
       pskFile: config.edamameMcpPskFile,

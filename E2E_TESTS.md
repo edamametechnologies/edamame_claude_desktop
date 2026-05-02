@@ -5,7 +5,7 @@ End-to-end test for the Claude Desktop reasoning-plane pipeline. Synthetic Claud
 ## What It Validates
 
 1. Provision checks: installed package layout, version alignment, MCP snippet presence, PSK file presence, and Claude Desktop plugin registration checks when enabled.
-2. Synthetic transcript generation: creates Desktop-shaped transcript fixtures in both Cowork and Code-in-Desktop roots.
+2. Synthetic transcript generation: creates Desktop-shaped transcript fixtures in the Cowork local-agent-mode root.
 3. Extrapolator execution: `claude_desktop_extrapolator.mjs` builds a `RawReasoningSessionPayload` and pushes it to EDAMAME via `upsert_behavioral_model_from_raw_sessions`.
 4. Behavioral model polling: `edamame_cli rpc get_behavioral_model` is polled until predictions exist for every injected `session_key` with the expected `agent_type` and `agent_instance_id`.
 

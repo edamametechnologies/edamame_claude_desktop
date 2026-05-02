@@ -1,6 +1,5 @@
 {
   "workspace_root": "__WORKSPACE_ROOT__",
-  "code_projects_root": "~/.claude/projects",
   "cowork_sessions_root": "__DEFAULT_COWORK_SESSIONS_ROOT__",
   "agent_type": "claude_desktop",
   "agent_instance_id": "__DEFAULT_AGENT_INSTANCE_ID__",

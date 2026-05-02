@@ -52,7 +52,7 @@ export async function runHealthcheck(config, options = {}) {
   };
 
   addCheck("config.workspaceRoot", !!config.workspaceRoot, config.workspaceRoot);
-  addCheck("config.codeProjectsRoot", !!config.codeProjectsRoot, config.codeProjectsRoot);
+  addCheck("config.coworkSessionsRoot", !!config.coworkSessionsRoot, config.coworkSessionsRoot);
 
   const hasPsk = await fileExists(config.edamameMcpPskFile);
   addCheck("psk.file", hasPsk, config.edamameMcpPskFile);

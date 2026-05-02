@@ -88,7 +88,6 @@ full access to the local EDAMAME MCP endpoint.
 | Field | Description | Default |
 |---|---|---|
 | `workspace_root` | Workspace this package monitors | Current working directory |
-| `code_projects_root` | Claude Code-in-Desktop project storage | `~/.claude/projects` |
 | `cowork_sessions_root` | Claude Cowork session storage | macOS: `~/Library/Application Support/Claude/local-agent-mode-sessions`, Windows: `%APPDATA%/Claude/local-agent-mode-sessions`, Linux: `~/.local/share/claude-desktop/local-agent-mode-sessions` |
 | `agent_type` | Producer name attached to each behavioral-model slice | `claude_desktop` |
 | `agent_instance_id` | Stable unique producer instance identifier | `<hostname>-<sha256(workspace)[:12]>` |
@@ -227,7 +226,7 @@ pairing succeeded.
    window (default 48 hours).
 2. Check that `transcript_project_hints` in the config matches your project
    directory names. The extrapolator uses these hints to locate relevant
-   transcript folders under `~/.claude/projects/`.
+   transcript folders under the Cowork local-agent-mode session root.
 3. Run the extrapolator manually to debug:
    ```bash
    node service/claude_desktop_extrapolator.mjs --config /path/to/config.json
@@ -245,14 +244,17 @@ environment variable pointing to a config with a corrected node path.
 
 ### Transcripts not being discovered
 
-The extrapolator searches two locations:
+The extrapolator searches the Claude Desktop Cowork session root:
 
-- `~/.claude/projects/` for Code-in-Desktop sessions
 - `~/Library/Application Support/Claude/local-agent-mode-sessions/` for
   Cowork sessions
 
-If your transcripts are in a non-standard location, set `code_projects_root`
-or `cowork_sessions_root` in the config file.
+If your transcripts are in a non-standard location, set `cowork_sessions_root`
+in the config file.
+
+Claude Code project transcripts under `~/.claude/projects/` are owned by the
+Claude Code integration. Keeping that root out of Claude Desktop prevents the
+same intent from appearing as both `claude_code` and `claude_desktop`.
 
 ### Debug logging
 

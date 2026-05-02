@@ -242,7 +242,7 @@ echo "=== Step 2: Write synthetic transcripts (Desktop session structure) ==="
 
 export _E2E_CONFIG_PATH="$CONFIG_PATH"
 E2E_STATE="$(python3 -c "
-import json, os, time
+import json, os, sys, time
 from pathlib import Path
 
 config_path = Path(os.environ['_E2E_CONFIG_PATH'])
@@ -260,12 +260,6 @@ elif sys.platform == 'win32':
     cowork_root = Path(os.environ.get('APPDATA', str(Path.home() / 'AppData' / 'Roaming'))) / 'Claude' / 'local-agent-mode-sessions'
 else:
     cowork_root = Path(os.environ.get('XDG_DATA_HOME', str(Path.home() / '.local' / 'share'))) / 'claude-desktop' / 'local-agent-mode-sessions'
-
-code_root_raw = cfg.get('code_projects_root') or cfg.get('codeProjectsRoot') or ''
-if code_root_raw:
-    code_root = Path(os.path.expanduser(str(code_root_raw))).resolve()
-else:
-    code_root = Path.home() / '.claude' / 'projects'
 
 ts = int(time.time())
 session_uuid = f'e2e-test-{ts}'
@@ -317,31 +311,6 @@ EDAMAME e2e_git {ts}: sync models from git@github.com:edamametechnologies/threat
 
 assistant:
 Planning git fetch for e2e_git_{ts}.
-''',
-)
-
-# Also inject into code_projects_root so the adapter sees both source_kinds
-code_transcript_dir = code_root / f'{ws.name}-edamame-e2e-inject'
-code_transcript_dir.mkdir(parents=True, exist_ok=True)
-
-def write_code_txt(name: str, body: str) -> None:
-    p = code_transcript_dir / f'{name}.txt'
-    p.write_text(body, encoding='utf-8')
-    os.utime(p, None)
-    markers.append(name)
-
-write_code_txt(
-    f'cw_e2e_code_{ts}',
-    f'''user:
-<user_query>
-EDAMAME cw_e2e_code {ts}: read project README and check dependencies
-</user_query>
-
-assistant:
-[Tool call] Read
-  path: {readme}
-assistant:
-Checked dependencies for cw_e2e_code_{ts}.
 ''',
 )
 
