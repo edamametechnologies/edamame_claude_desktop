@@ -1,7 +1,7 @@
 {
   "name": "edamame-desktop",
   "description": "Runtime behavioral monitoring for Claude Desktop. Bridges session transcripts to the EDAMAME Security two-plane divergence engine for continuous workstation protection.",
-  "version": "1.3.7",
+  "version": "1.3.6",
   "author": {
     "name": "EDAMAME Technologies",
     "email": "info@edamame.tech"
