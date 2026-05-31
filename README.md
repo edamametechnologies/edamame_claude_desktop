@@ -140,6 +140,7 @@ health check details, and troubleshooting. See
 | [edamame_claude_code](https://github.com/edamametechnologies/edamame_claude_code) | Claude Code CLI plugin (public) |
 | [edamame_cursor](https://github.com/edamametechnologies/edamame_cursor) | Cursor developer workstation package (public) |
 | [edamame_openclaw](https://github.com/edamametechnologies/edamame_openclaw) | OpenClaw agent integration package (public) |
+| [edamame_codex](https://github.com/edamametechnologies/edamame_codex) | Codex CLI integration package (public) |
 | [agent_security](https://github.com/edamametechnologies/agent_security) | Research paper and publication pipeline (public) |
 | [edamame_posture](https://github.com/edamametechnologies/edamame_posture) | EDAMAME Posture CLI (public) |
 
