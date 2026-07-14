@@ -1,8 +1,11 @@
 # EDAMAME for Claude Desktop
 
-Runtime behavioral monitoring for Claude Desktop. Bridges Desktop Cowork
-session transcripts to the EDAMAME Security two-plane divergence engine for
-continuous workstation protection.
+Runtime behavioral monitoring for Claude Desktop. EDAMAME Security monitors Claude
+Desktop **automatically**: its host-side observer runs two-plane divergence detection
+the moment Desktop Cowork transcripts are discovered on disk, with **no plugin
+required**. This package is a cooperative enhancement — it adds off-host coverage and
+turnkey MCP onboarding (see "Observer vs plugin" below), and never provides, or can
+weaken, that guarantee.
 
 ---
 
@@ -22,11 +25,13 @@ continuous workstation protection.
    - macOS: `~/Library/Application Support/Claude/local-agent-mode-sessions/`
    - Windows: `%APPDATA%/Claude/local-agent-mode-sessions/`
    - Linux: `~/.local/share/claude-desktop/local-agent-mode-sessions/`
-2. This package parses transcripts and forwards them to EDAMAME via MCP
-   (`upsert_behavioral_model_from_raw_sessions`).
+2. EDAMAME's host-side observer reads those transcripts directly (no plugin required)
+   and runs divergence detection. Where the host cannot read them (off-host / remote /
+   container), this package forwards them via MCP
+   (`upsert_behavioral_model_from_raw_sessions`) instead.
 3. EDAMAME evaluates behavioral intent against live system telemetry.
-4. Divergence verdicts (`CLEAN`, `DIVERGENCE`, `NO_MODEL`, `STALE`) surface
-   through the control center or health checks.
+4. Divergence verdicts (`CLEAN`, `DIVERGENCE`, `NO_MODEL`, `STALE`) surface in EDAMAME
+   (and, for convenience, through this package's control center or health checks).
 
 ## Observer vs plugin: what provides the security
 

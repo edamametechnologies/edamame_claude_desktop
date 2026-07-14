@@ -1,6 +1,6 @@
 # Architecture
 
-`edamame_claude_desktop` is the Claude Desktop workstation package in the EDAMAME agent-plugin family. It bridges Claude Desktop reasoning artifacts to the local EDAMAME host so EDAMAME can correlate expected behavior against observed system activity.
+`edamame_claude_desktop` is the Claude Desktop workstation package in the EDAMAME agent-plugin family. EDAMAME's host-side transcript observer performs the two-plane monitoring: it reads Claude Desktop's Cowork transcripts directly and correlates that intent against live system telemetry as soon as Claude Desktop is **discovered** on disk, with **no plugin required** (see [Observer vs plugin: the value boundary](#observer-vs-plugin-the-value-boundary) below). This package is an optional, additive enhancement -- it extends that coverage off-host and provides turnkey MCP onboarding; it never performs, or can weaken, the monitoring.
 
 ## Runtime Model
 
