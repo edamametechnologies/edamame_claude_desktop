@@ -40,6 +40,8 @@ bash tests/e2e_inject_intent.sh
 ## CI Integration
 
 The `test_e2e.yml` workflow runs this test after provisioning the local EDAMAME host, configuring the required agentic inputs, and installing the plugin in the CI environment.
+The `healthcheck_cli.mjs` step is a hard gate (non-zero exit fails the job);
+do not wrap it in `|| true`.
 
 ## Full Cross-Agent E2E Suite
 
