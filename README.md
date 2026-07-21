@@ -1,5 +1,7 @@
 # EDAMAME for Claude Desktop
 
+> **ARCHIVED (EDAMAME 1.7.0):** Level-2 agent plugin distribution is retired. Host-side transcript observation is the default monitoring path; prevention is via **nono** / **srt** governance harnesses. The remaining release gate is [agent_security fleet monitoring](https://github.com/edamametechnologies/agent_security/blob/main/.github/workflows/agent_monitoring_e2e.yml).
+
 Runtime behavioral monitoring for Claude Desktop. EDAMAME Security monitors Claude
 Desktop **automatically**: its host-side observer runs two-plane divergence detection
 the moment Desktop Cowork transcripts are discovered on disk, with **no plugin
