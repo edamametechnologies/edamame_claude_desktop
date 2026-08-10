@@ -1,4 +1,4 @@
-> **ARCHIVED (EDAMAME 1.7.0):** Per-repo Level-2 E2E (`test_e2e.yml`) no longer release-gates. Use [agent_security fleet monitoring](https://github.com/edamametechnologies/agent_security/blob/main/tests/e2e/E2E_TESTS.md#3-fleet-monitoring-e2e-run_fleet_monitoringpy) instead.
+> **ARCHIVED (EDAMAME 1.7.0):** Per-repo Level-2 E2E (`test_e2e.yml`) no longer release-gates. Use [edamame_posture fleet monitoring](https://github.com/edamametechnologies/edamame_posture_cli/blob/main/tests/e2e/E2E_TESTS.md) instead.
 
 # Claude Desktop Intent E2E Test
 
@@ -47,4 +47,4 @@ do not wrap it in `|| true`.
 
 ## Full Cross-Agent E2E Suite
 
-The full cross-agent benchmark and trigger harness lives in the public `agent_security` repository under `tests/e2e/`. Use `--agent-type claude_desktop` when exercising the shared harness.
+The full cross-agent benchmark and trigger harness lives in the public `edamame_posture` repository under `tests/e2e/`. Use `--agent-type claude_desktop` when exercising the shared harness.
