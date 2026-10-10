@@ -1,6 +1,6 @@
 {
   "name": "edamame-desktop",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "EDAMAME Security plugin for Claude Desktop - runtime behavioral monitoring",
   "type": "module",
   "engines": {
